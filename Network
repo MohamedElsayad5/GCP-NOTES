@@ -1,0 +1,892 @@
+# Google Cloud Interconnect - Complete Study Notes
+
+## Overview
+
+Google Cloud provides multiple connectivity options between:
+
+- On-Premises Networks
+- Other Cloud Providers (AWS, Azure, etc.)
+- Google Cloud VPC Networks
+
+The two major solutions are:
+
+1. Cloud VPN
+2. Cloud Interconnect
+
+---
+
+# Cloud VPN
+
+## What is Cloud VPN?
+
+Cloud VPN creates encrypted tunnels over the public Internet between:
+
+- On-Premises Networks
+- Another Cloud Provider
+- Google Cloud
+
+### Characteristics
+
+- Quick deployment
+- Low operational effort
+- Cost-effective
+- Uses public Internet
+- Supports encrypted communication using IPsec
+
+### Bandwidth
+
+Typically:
+
+- 1 Gbps to 3 Gbps per tunnel
+
+Actual throughput depends on:
+
+- Internet quality
+- Distance
+- Network congestion
+
+### Limitations
+
+Because traffic traverses the Internet:
+
+- Higher latency
+- Jitter
+- Variable performance
+- Less predictable throughput
+
+### Best Use Cases
+
+- Small and medium workloads
+- Fast connectivity setup
+- Backup connectivity
+- Temporary environments
+
+---
+
+# Cloud Interconnect
+
+## What is Cloud Interconnect?
+
+Cloud Interconnect provides a private physical connection between:
+
+- Customer Network
+- Google Cloud
+
+Traffic does NOT traverse the public Internet.
+
+---
+
+## Advantages
+
+### High Bandwidth
+
+Supported port speeds:
+
+- 10 Gbps
+- 100 Gbps
+
+Multiple circuits can be combined for higher capacity.
+
+---
+
+### Lower Latency
+
+Traffic travels directly through Google's network.
+
+Benefits:
+
+- Lower latency
+- Lower jitter
+- More stable performance
+
+---
+
+### Enterprise Ready
+
+Ideal for:
+
+- Large enterprises
+- Mission-critical applications
+- Large data transfers
+- Hybrid cloud architectures
+
+---
+
+# Google Global Backbone
+
+Google operates a global private backbone network connecting all regions.
+
+Example:
+
+```text
+Europe-West1
+      |
+      |
+Google Backbone
+      |
+      |
+US-Central1
+```
+
+Resources inside a VPC communicate through Google's backbone automatically.
+
+---
+
+# Colocation Facility
+
+Interconnect connections are established inside special data centers called:
+
+## Colocation Facilities
+
+A colocation facility is a neutral data center where:
+
+- Google equipment exists
+- Cloud providers exist
+- ISPs exist
+- Enterprises may place equipment
+
+---
+
+# Meet-Me Room (MMR)
+
+Inside a colocation facility there is a room called:
+
+## Meet-Me Room
+
+Purpose:
+
+- Physical cross-connections occur here
+
+Contains:
+
+- Patch panels
+- Fiber termination points
+- Cross-connect infrastructure
+
+---
+
+# Cross Connect
+
+A Cross Connect is the physical fiber cable connecting:
+
+```text
+Customer Equipment
+         |
+         |
+   Cross Connect
+         |
+         |
+Google Equipment
+```
+
+This creates private connectivity.
+
+---
+
+# LOA-CFA
+
+## Letter of Authorization and Connecting Facility Assignment
+
+When ordering Dedicated Interconnect Google generates:
+
+LOA-CFA
+
+Contains:
+
+- Port information
+- Facility information
+- Patch panel information
+- Technical connection details
+
+Required by the colocation provider to complete the cross-connect.
+
+---
+
+# Types of Interconnect
+
+There are three main types.
+
+---
+
+# 1. Dedicated Interconnect
+
+## Definition
+
+A direct physical connection between:
+
+Customer Equipment
+and
+Google Equipment
+
+inside the same colocation facility.
+
+---
+
+## Characteristics
+
+You receive:
+
+- Dedicated physical port
+- Dedicated physical circuit
+
+Supported port sizes:
+
+- 10 Gbps
+- 100 Gbps
+
+---
+
+## Advantages
+
+- Maximum performance
+- Lowest latency
+- Highest bandwidth
+- Direct connectivity
+
+---
+
+## Requirements
+
+Must have:
+
+- Equipment inside facility
+or
+- Partner hosting your equipment
+
+---
+
+# 2. Partner Interconnect
+
+## Definition
+
+Used when customer equipment is not present in a Google colocation facility.
+
+A service provider already connected to Google acts as intermediary.
+
+---
+
+## Architecture
+
+```text
+Customer
+    |
+Partner Network
+    |
+Google Network
+```
+
+---
+
+## Characteristics
+
+No dedicated Google port.
+
+Bandwidth options are flexible.
+
+Typical bandwidth:
+
+- 50 Mbps
+- Hundreds of Mbps
+- Multiple Gbps
+
+---
+
+## Benefits
+
+- Easier deployment
+- Lower complexity
+- No colocation presence required
+
+---
+
+# 3. Cross-Cloud Interconnect
+
+## Definition
+
+Private connectivity between:
+
+- Google Cloud
+- AWS
+- Azure
+- Other cloud providers
+
+---
+
+## Example
+
+```text
+Google Cloud
+      |
+Cross Cloud Interconnect
+      |
+AWS Direct Connect
+```
+
+Google manages the connectivity process.
+
+---
+
+# Metro Concept
+
+Google groups nearby colocation facilities into:
+
+## Metro Areas
+
+Examples:
+
+- Amsterdam Metro
+- Brussels Metro
+
+A Metro may contain:
+
+- One facility
+- Multiple facilities
+
+---
+
+# Edge Availability Domain (EAD)
+
+Within a Metro Google divides infrastructure into:
+
+## Edge Availability Domains
+
+Purpose:
+
+- Fault isolation
+- Maintenance isolation
+- Redundancy
+
+Think of them as independent groups of edge devices.
+
+---
+
+# High Availability Design
+
+## 99.9% SLA
+
+Requires:
+
+- Two Interconnect connections
+- Same Metro
+- Different Edge Availability Domains
+
+---
+
+## 99.99% SLA
+
+Requires:
+
+- Four Interconnect connections
+- Two Metro Areas
+- Different EADs in each Metro
+
+Example:
+
+```text
+Metro A
+  EAD1
+  EAD2
+
+Metro B
+  EAD1
+  EAD2
+```
+
+---
+
+# Physical Connection is NOT Enough
+
+After installing the fiber connection:
+
+Traffic still cannot flow.
+
+Additional logical configuration is required.
+
+---
+
+# VLAN Attachment
+
+## What is VLAN Attachment?
+
+A logical connection created over the physical Interconnect.
+
+Equivalent to:
+
+802.1Q VLAN
+
+---
+
+## Functions
+
+Provides:
+
+- VLAN ID
+- BGP IP addresses
+
+---
+
+## Process
+
+Google:
+
+```text
+Assigns VLAN ID
+Assigns BGP Addresses
+```
+
+Customer:
+
+```text
+Creates matching VLAN interface
+Configures BGP
+```
+
+---
+
+# Cloud Router
+
+## Purpose
+
+Cloud Router is required for:
+
+- Dynamic routing
+- BGP peering
+- Route advertisement
+
+---
+
+## Functions
+
+- Establishes BGP sessions
+- Learns on-prem routes
+- Advertises VPC routes
+
+---
+
+# BGP Peering
+
+After VLAN Attachment creation:
+
+Google provides:
+
+```text
+Google BGP IP
+Customer BGP IP
+```
+
+BGP session is established.
+
+---
+
+## Result
+
+Route exchange occurs automatically.
+
+Google learns:
+
+```text
+On-Prem Networks
+```
+
+On-Prem learns:
+
+```text
+VPC Networks
+```
+
+---
+
+# Dynamic Routes
+
+Routes learned through BGP become:
+
+Dynamic Routes
+
+These routes enter the VPC routing table.
+
+---
+
+# Regional Dynamic Routing
+
+Default behavior.
+
+Routes are visible only to workloads within the same region.
+
+---
+
+## Example
+
+```text
+Europe-West1
+    |
+Cloud Router
+```
+
+Workloads in:
+
+- Europe-West1
+
+Can use routes.
+
+Workloads in:
+
+- US-Central1
+
+Cannot.
+
+---
+
+# Global Dynamic Routing
+
+When enabled:
+
+All regions can use learned routes.
+
+Example:
+
+```text
+Europe-West1
+US-Central1
+Asia-East1
+```
+
+All regions see routes learned from Interconnect.
+
+---
+
+# Difference Between Subnet Routes and Dynamic Routes
+
+## Subnet Routes
+
+Automatically global.
+
+No extra configuration required.
+
+---
+
+## Dynamic Routes
+
+Require:
+
+```text
+Global Dynamic Routing
+```
+
+to be visible across regions.
+
+---
+
+# Multiple VLAN Attachments
+
+One physical Interconnect can contain:
+
+Multiple VLAN Attachments.
+
+Benefits:
+
+- Traffic separation
+- Multi-tenancy
+- Capacity distribution
+
+Each VLAN can have:
+
+- Independent BGP session
+- Independent routing
+
+---
+
+# Partner Interconnect Layer 2
+
+Partner only transports VLAN.
+
+Customer performs:
+
+```text
+Customer Router <-> Google Cloud Router
+```
+
+BGP directly with Google.
+
+---
+
+# Partner Interconnect Layer 3
+
+Partner handles BGP with Google.
+
+Customer peers with Partner.
+
+```text
+Customer Router
+      |
+Partner Router
+      |
+Google Router
+```
+
+---
+
+# Encryption
+
+## Default Behavior
+
+Interconnect traffic is:
+
+NOT encrypted
+
+Layer 2:
+Not encrypted
+
+Layer 3:
+Not encrypted
+
+---
+
+# MACsec Encryption
+
+## What is MACsec?
+
+Media Access Control Security
+
+Layer 2 encryption protocol.
+
+---
+
+## Purpose
+
+Encrypts traffic between:
+
+```text
+Customer Device
+      |
+      |
+Google Edge Device
+```
+
+---
+
+## Important Limitation
+
+Not End-to-End Encryption.
+
+Only protects the local Interconnect segment.
+
+---
+
+# VPN over Interconnect
+
+## Why?
+
+To achieve:
+
+End-to-End Encryption
+
+while keeping:
+
+- Private connectivity
+- High bandwidth
+
+---
+
+## Architecture
+
+```text
+On-Prem
+    |
+VPN Tunnel
+    |
+Interconnect
+    |
+Google Cloud
+```
+
+---
+
+## How it Works
+
+Cloud VPN gateways are deployed.
+
+VPN tunnels run over:
+
+VLAN Attachments
+
+instead of public Internet.
+
+---
+
+## Benefits
+
+Provides:
+
+- Encryption
+- Private transport
+- Enterprise-grade security
+
+---
+
+# Complete Interconnect Workflow
+
+Step 1
+
+Order:
+
+- Dedicated Interconnect
+or
+- Partner Interconnect
+
+---
+
+Step 2
+
+Physical connectivity established.
+
+---
+
+Step 3
+
+Create VLAN Attachment.
+
+---
+
+Step 4
+
+Receive:
+
+- VLAN ID
+- BGP addresses
+
+---
+
+Step 5
+
+Configure VLAN interface on customer router.
+
+---
+
+Step 6
+
+Deploy Cloud Router.
+
+---
+
+Step 7
+
+Establish BGP session.
+
+---
+
+Step 8
+
+Exchange routes.
+
+---
+
+Step 9
+
+(Optional)
+
+Enable Global Dynamic Routing.
+
+---
+
+Step 10
+
+(Optional)
+
+Enable:
+
+- MACsec
+- VPN over Interconnect
+
+for enhanced security.
+
+---
+
+# Interview Summary
+
+## Cloud VPN
+
+- Internet based
+- IPsec encrypted
+- Fast deployment
+- Lower bandwidth
+
+---
+
+## Cloud Interconnect
+
+- Private connectivity
+- High bandwidth
+- Enterprise solution
+- Lower latency
+
+---
+
+## Dedicated Interconnect
+
+- Direct physical Google port
+- 10G / 100G
+- Highest performance
+
+---
+
+## Partner Interconnect
+
+- Through service provider
+- Flexible bandwidth
+- Easier deployment
+
+---
+
+## Cross Cloud Interconnect
+
+- Connects GCP with AWS/Azure
+
+---
+
+## VLAN Attachment
+
+Logical connection over physical circuit.
+
+---
+
+## Cloud Router
+
+Provides:
+
+- BGP
+- Dynamic routing
+
+---
+
+## BGP
+
+Used for:
+
+- Route exchange
+- Dynamic route advertisement
+
+---
+
+## Global Dynamic Routing
+
+Makes learned routes available across all VPC regions.
+
+---
+
+## MACsec
+
+Layer 2 encryption.
+
+Not end-to-end.
+
+---
+
+## VPN over Interconnect
+
+Provides:
+
+- End-to-End Encryption
+- Private Connectivity
+- High Performance
+
+This is the most secure Interconnect architecture.
